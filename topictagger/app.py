@@ -31,7 +31,8 @@ def index():
 def item_base():
 
     if request.method == "POST":
-        pass
+        item = request.form.get("item")
+        return redirect(f"/item/{item}")
 
     return render_template("item.html")
 
@@ -40,14 +41,35 @@ def item_base():
 def item_id(item_id):
 
     if request.method == "POST":
-        pass
+
+        item = request.form.get("item")
+
+        return redirect(f"/item/{item}")
 
     query = f"SELECT * WHERE {{ OPTIONAL {{wd:{item_id} wdt:P356 ?doi}} }}  "
     query_formatted = "https://query.wikidata.org/sparql?query=" + urllib.parse.quote(
         query, safe=""
     )
 
-    r = requests.get(query_formatted, params={"format": "json"})
+    wikidata_result = requests.get(query_formatted, params={"format": "json"})
 
-    return render_template("item.html", item=r.json())
+    doi = wikidata_result.json()["results"]["bindings"][0]["doi"]["value"]
 
+    query_to_europe_pmc = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:{doi}&format=json&resultType=core"
+    print(query_to_europe_pmc)
+    r = requests.get(query_to_europe_pmc, params={"format": "json"})
+
+    json_for_article = r.json()["resultList"]["result"][0]
+    abstract = json_for_article["abstractText"]
+    title = json_for_article["title"]
+    mesh_headings = json_for_article["meshHeadingList"]["meshHeading"]
+    keywords = json_for_article["keywordList"]["keyword"]
+
+    return render_template(
+        "item.html",
+        item=item_id,
+        title=title,
+        abstract=abstract,
+        mesh_headings=mesh_headings,
+        keywords=keywords,
+    )

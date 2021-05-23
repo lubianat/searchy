@@ -5,5 +5,16 @@ Log In
 {% endblock %}
 
 {% block main %}
+<form action="/item" method="post">
+    <div class="form-group">
+        <input class="form-control" name="item" placeholder="QID for article" type="text">
+    </div>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
 <p>Item: {{ item }} </p>
+<p>Title: {{ title }} </p>
+<p>Abstract: {{ abstract }} </p>
+<p> {{mesh_headings}}</p>
+<p> {{keywords}}</p>
 {% endblock %}
