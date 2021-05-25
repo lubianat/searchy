@@ -20,9 +20,6 @@
         integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
         crossorigin="anonymous"></script>
 
-    <!-- vue.js development version, includes helpful console warnings from https://vuejs.org/v2/guide/ -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-
     <title>Topic Tagger: {% block title %}{% endblock %}</title>
 
 </head>
@@ -67,9 +64,7 @@
     {% endif %}
 
     <main class="container p-5">
-        <div id="app">
-            ${ message }
-        </div>
+
         {% block main %}{% endblock %}
     </main>
 

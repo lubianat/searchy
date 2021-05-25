@@ -15,6 +15,11 @@ Log In
 <p>Item: {{ item }} </p>
 <p>Title: {{ title }} </p>
 <p>Abstract: {{ abstract }} </p>
-<p> {{mesh_headings}}</p>
-<p> {{keywords}}</p>
+<p>Keywords:</p>
+<ul>
+    {% for keyword in keywords %}
+    <li>{{ keyword }}</li>
+    {% endfor%}
+
+</ul>
 {% endblock %}
