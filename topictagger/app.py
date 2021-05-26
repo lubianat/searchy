@@ -51,22 +51,38 @@ def item_id(item_id):
         query, safe=""
     )
 
-    wikidata_result = requests.get(query_formatted, params={"format": "json"})
+    try:
+        wikidata_result = requests.get(query_formatted, params={"format": "json"})
 
-    doi = wikidata_result.json()["results"]["bindings"][0]["doi"]["value"]
+        doi = wikidata_result.json()["results"]["bindings"][0]["doi"]["value"]
 
-    query_to_europe_pmc = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:{doi}&format=json&resultType=core"
-    print(query_to_europe_pmc)
-    r = requests.get(query_to_europe_pmc, params={"format": "json"})
+        query_to_europe_pmc = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:{doi}&format=json&resultType=core"
+        print(query_to_europe_pmc)
+        r = requests.get(query_to_europe_pmc, params={"format": "json"})
 
-    json_for_article = r.json()["resultList"]["result"][0]
-    abstract = json_for_article["abstractText"]
+        json_for_article = r.json()["resultList"]["result"][0]
+    except:
+        return render_template(
+            "item.html",
+            notfound="Item is not an article or did not have a DOI on Wikidata",
+        )
+
+    try:
+        abstract = json_for_article["abstractText"]
+    except:
+        abstract = "No abstract."
+
     title = json_for_article["title"]
     mesh_headings = json_for_article["meshHeadingList"]["meshHeading"]
-    keywords = json_for_article["keywordList"]["keyword"]
+
+    try:
+        keywords = json_for_article["keywordList"]["keyword"]
+    except:
+        keywords = {"No keywords."}
 
     return render_template(
         "item.html",
+        notfound="",
         item=item_id,
         title=title,
         abstract=abstract,

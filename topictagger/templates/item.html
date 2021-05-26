@@ -5,13 +5,14 @@ Log In
 {% endblock %}
 
 {% block main %}
+{{ notfound }}
 <form action="/item" method="post">
     <div class="form-group">
-        <input class="form-control" name="item" placeholder="QID for article" type="text">
+        <input id="searchterm" class="form-control" name="item" placeholder="QID for article" type="text">
     </div>
-
-    <button class="btn btn-primary" type="submit">Submit</button>
+    <div id="searchresult"></div>
 </form>
+<ul></ul>
 <p>Item: {{ item }} </p>
 <p>Title: {{ title }} </p>
 <p>Abstract: {{ abstract }} </p>
@@ -22,4 +23,5 @@ Log In
     {% endfor%}
 
 </ul>
+
 {% endblock %}
