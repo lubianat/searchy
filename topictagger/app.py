@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_session import Session
 from datetime import datetime
 import requests
@@ -8,7 +8,7 @@ import urllib.parse
 # Configure application
 
 app = Flask(__name__)
-
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -62,10 +62,8 @@ def item_id(item_id):
 
         json_for_article = r.json()["resultList"]["result"][0]
     except:
-        return render_template(
-            "item.html",
-            notfound="Item is not an article or did not have a DOI on Wikidata",
-        )
+        flash("Item is not an article or did not have a DOI on Wikidata")
+        return redirect(url_for(".item_base"))
 
     try:
         abstract = json_for_article["abstractText"]
@@ -82,7 +80,7 @@ def item_id(item_id):
 
     return render_template(
         "item.html",
-        notfound="",
+        message="",
         item=item_id,
         title=title,
         abstract=abstract,

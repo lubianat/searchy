@@ -5,10 +5,10 @@ Log In
 {% endblock %}
 
 {% block main %}
-{{ notfound }}
 <form action="/item" method="post">
     <div class="form-group">
-        <input id="searchterm" class="form-control" name="item" placeholder="QID for article" type="text">
+        <input autocomplete=off id="searchterm" class="form-control" name="item" placeholder="Search article by name"
+            type="text">
     </div>
     <div id="searchresult"></div>
 </form>
