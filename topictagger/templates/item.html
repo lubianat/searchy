@@ -5,23 +5,38 @@ Log In
 {% endblock %}
 
 {% block main %}
-<form action="/item" method="post">
-    <div class="form-group">
-        <input autocomplete=off id="searchterm" class="form-control" name="item" placeholder="Search article by name"
-            type="text">
-    </div>
-    <div id="searchresult"></div>
-</form>
-<ul></ul>
-<p>Item: {{ item }} </p>
-<p>Title: {{ title }} </p>
-<p>Abstract: {{ abstract }} </p>
-<p>Keywords:</p>
-<ul>
-    {% for keyword in keywords %}
-    <li>{{ keyword }}</li>
-    {% endfor%}
 
-</ul>
+<div class="row container">
+    <form action="/item" method="post">
+        <div class="form-group">
+            <input autocomplete=off id="searchterm" class="form-control" name="item"
+                placeholder="Search article by name" type="text">
+        </div>
+        <div id="searchresult">
+        </div>
+    </form>
+</div>
+{% if abstract %}
+<h3> {{ title }} (<a href="https://wikidata.org/wiki/{{ item }}">{{ item }}</a>) </h3>
+
+<div class="row">
+    <div class="col-md">
+
+        <p>{{ abstract |safe}} </p>
+        <p>Keywords:</p>
+        <ul>
+            {% for keyword in keywords %}
+            <li>{{ keyword }}</li>
+            {% endfor%}
+
+        </ul>
+    </div>
+    <div class="col-md">
+        Lorem ipsum
+        <!-- content from Wikidata -->
+        <!-- input form -->
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
