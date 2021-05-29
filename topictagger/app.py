@@ -27,6 +27,7 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/item/", methods=["GET", "POST"])
 @app.route("/item", methods=["GET", "POST"])
 def item_base():
 

@@ -16,6 +16,10 @@ Log In
         </div>
     </form>
 </div>
+
+{% if not abstract %}
+<a href="/item/Q87830400">See an example</a>
+{% endif %}
 {% if abstract %}
 <h3> {{ title }} (<a href="https://wikidata.org/wiki/{{ item }}">{{ item }}</a>) </h3>
 
