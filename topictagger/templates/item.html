@@ -24,10 +24,10 @@ Log In
 <h3> {{ title }} (<a href="https://wikidata.org/wiki/{{ item }}">{{ item }}</a>) </h3>
 
 <div class="row">
-    <div class="col-md">
+    <div class="col-md container">
 
         <p>{{ abstract |safe}} </p>
-        <p>Keywords:</p>
+        <p>Keywords from EuropePMC:</p>
         <ul>
             {% for keyword in keywords %}
             <li>{{ keyword }}</li>
@@ -36,7 +36,12 @@ Log In
         </ul>
     </div>
     <div class="col-md">
-        Lorem ipsum
+        <h5>Topics on wikidata:</h5>
+        <ul>
+            {% for link, subject in main_subjects.items()%}
+            <li><a href="{{ link }}"> {{ subject }}</a></li>
+            {% endfor %}
+        </ul>
         <!-- content from Wikidata -->
         <!-- input form -->
     </div>

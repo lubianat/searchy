@@ -47,7 +47,11 @@ def item_id(item_id):
 
         return redirect(f"/item/{item}")
 
-    query = f"SELECT * WHERE {{ OPTIONAL {{wd:{item_id} wdt:P356 ?doi}} }}  "
+    query = f"""SELECT ?doi ?topic ?topicLabel WHERE {{ 
+        OPTIONAL {{wd:{item_id} wdt:P356 ?doi}} .
+        OPTIONAL {{wd:{item_id} wdt:P921 ?topic}} .
+        SERVICE wikibase:label {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }}
+        }}  """
     query_formatted = "https://query.wikidata.org/sparql?query=" + urllib.parse.quote(
         query, safe=""
     )
@@ -62,6 +66,11 @@ def item_id(item_id):
         r = requests.get(query_to_europe_pmc, params={"format": "json"})
 
         json_for_article = r.json()["resultList"]["result"][0]
+
+        main_subjects = {}
+        for snak in wikidata_result.json()["results"]["bindings"]:
+            main_subjects[snak["topic"]["value"]] = snak["topicLabel"]["value"]
+
     except:
         flash("Item is not an article or did not have a DOI on Wikidata")
         return redirect(url_for(".item_base"))
@@ -87,4 +96,5 @@ def item_id(item_id):
         abstract=abstract,
         mesh_headings=mesh_headings,
         keywords=keywords,
+        main_subjects=main_subjects,
     )
