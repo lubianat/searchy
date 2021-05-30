@@ -44,3 +44,19 @@ series of quickstatements commands (where then user logs in and paste the comman
 - Implement advanced features for selecting articles
   - Articles that match a given topic and other filters
 
+
+## Change of plans:
+
+Tutorial leads to a bug + I realize this might be too much for the first tool.
+
+Simpler idea: toolforge-hosted, Wikidata-based engine for biomedical articles. 
+
+3 input fields: 
+
+- Main Subject
+- Gender 
+- Region
+
+
+Articles are, then, retrieved and displayed to the end user.
+
