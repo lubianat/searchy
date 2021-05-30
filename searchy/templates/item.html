@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Log In
+{% endblock %}
+
+{% block main %}
+
+{% if not abstract %}
+<a href="/item/Q87830400">See an example</a>
+{% endif %}
+{% if abstract %}
+<h3> {{ title }} (<a href="https://wikidata.org/wiki/{{ item }}">{{ item }}</a>) </h3>
+
+<div class="row">
+    <div class="col-md container">
+
+        <p>{{ abstract |safe}} </p>
+        <p>Keywords from EuropePMC:</p>
+        <ul>
+            {% for keyword in keywords %}
+            <li>{{ keyword }}</li>
+            {% endfor%}
+
+        </ul>
+    </div>
+    <div class="col-md">
+        <h5>Topics on wikidata:</h5>
+        <ul>
+            {% for link, subject in main_subjects.items()%}
+            <li><a href="{{ link }}"> {{ subject }}</a></li>
+            {% endfor %}
+        </ul>
+        <!-- content from Wikidata -->
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

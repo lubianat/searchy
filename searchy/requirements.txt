@@ -1,4 +1,5 @@
 flask
 flask_session
 pyyaml
-
+requests
+wbib

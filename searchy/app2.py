@@ -5,8 +5,8 @@ from datetime import datetime
 import requests
 import urllib.parse
 import flask
+import mwoauth
 import os
-from wbib import wbib
 import yaml
 
 
@@ -14,6 +14,10 @@ import yaml
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+# Load configuration from YAML file
+__dir__ = os.path.dirname(__file__)
+app.config.update(yaml.safe_load(open(os.path.join(__dir__, "config.yaml"))))
+
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -29,60 +33,70 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    return flask.render_template("index.html")
+    greeting = app.config["GREETING"]
+    username = flask.session.get("username", None)
+    return flask.render_template("index.html", username=username, greeting=greeting)
 
 
-@app.route("/search")
-def search():
-
-    genders = ["female", "other"]
-
-    return flask.render_template("search.html", genders=genders)
-
-
-@app.route("/search/<item_id>", methods=["GET", "POST"])
-def search_with_topic(item_id):
-
-    query = f"""SELECT  ?topic ?topicLabel WHERE {{ 
-    VALUES ?topic {{ wd:{item_id} }} .
-    SERVICE wikibase:label {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }}
-    }}  """
-
-    query_formatted = "https://query.wikidata.org/sparql?query=" + urllib.parse.quote(
-        query, safe=""
+@app.route("/login")
+def login():
+    """Initiate an OAuth login.
+    
+    Call the MediaWiki server to get request secrets and then redirect the
+    user to the MediaWiki server to sign the request.
+    """
+    consumer_token = mwoauth.ConsumerToken(
+        app.config["CONSUMER_KEY"], app.config["CONSUMER_SECRET"]
     )
-    print(query_formatted)
-    wikidata_result = requests.get(query_formatted, params={"format": "json"})
-    item_label = wikidata_result.json()["results"]["bindings"][0]["topicLabel"]["value"]
+    try:
+        redirect, request_token = mwoauth.initiate(
+            app.config["OAUTH_MWURI"], consumer_token
+        )
+    except Exception:
+        app.logger.exception("mwoauth.initiate failed")
+        return flask.redirect(flask.url_for("index"))
+    else:
+        flask.session["request_token"] = dict(zip(request_token._fields, request_token))
+        return flask.redirect(redirect)
 
-    main_subject = {item_id: item_label}
-    genders = {"female": "Q6581072", "any": ""}
-    regions = {"latin america": "Q12585", "any": ""}
-    with open("config.yaml") as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
 
-    config["restriction"]["topic_of_work"] = [item_id]
-    config["title"] = ""
-    config["subtitle"] = "Searchig articles about " + item_label
+@app.route("/oauth-callback")
+def oauth_callback():
+    """OAuth handshake callback."""
+    if "request_token" not in flask.session:
+        flask.flash("OAuth callback failed. Are cookies disabled?")
+        return flask.redirect(flask.url_for("index"))
 
-    if request.method == "POST":
-        # TODO
-        return redirect(f"/search/{item}")
-
-    html = wbib.render_dashboard(config, mode="advanced", filepath="dashboard.html")
-
-    return flask.render_template(
-        "search.html",
-        genders=genders,
-        main_subject=main_subject,
-        regions=regions,
-        dashboard=html,
+    consumer_token = mwoauth.ConsumerToken(
+        app.config["CONSUMER_KEY"], app.config["CONSUMER_SECRET"]
     )
 
+    try:
+        access_token = mwoauth.complete(
+            app.config["OAUTH_MWURI"],
+            consumer_token,
+            mwoauth.RequestToken(**flask.session["request_token"]),
+            flask.request.query_string,
+        )
 
-@app.route("/about")
-def about():
-    return flask.render_template("about.html")
+        identity = mwoauth.identify(
+            app.config["OAUTH_MWURI"], consumer_token, access_token
+        )
+    except Exception:
+        app.logger.exception("OAuth authentication failed")
+
+    else:
+        flask.session["access_token"] = dict(zip(access_token._fields, access_token))
+        flask.session["username"] = identity["username"]
+
+    return flask.redirect(flask.url_for("index"))
+
+
+@app.route("/logout")
+def logout():
+    """Log the user out by clearing their session."""
+    flask.session.clear()
+    return flask.redirect(flask.url_for("index"))
 
 
 @app.route("/item/", methods=["GET", "POST"])
