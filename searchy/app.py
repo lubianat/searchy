@@ -56,8 +56,8 @@ def search_with_topic(item_id):
     item_label = wikidata_result.json()["results"]["bindings"][0]["topicLabel"]["value"]
 
     main_subject = {item_id: item_label}
-    genders = {"female": "Q6581072", "any": ""}
-    regions = {"latin america": "Q12585", "any": ""}
+    genders = {"female": "Q6581072", "any": "any"}
+    regions = {"latin america": "Q12585", "any": "any"}
     with open("config.yaml") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -65,9 +65,17 @@ def search_with_topic(item_id):
     config["title"] = ""
     config["subtitle"] = "Searchig articles about " + item_label
 
-    if request.method == "POST":
-        # TODO
-        return redirect(f"/search/{item}")
+    if "gender" in request.args:
+        print(request.args["gender"])
+        gender = request.args["gender"]
+        if gender != None and gender != "any":
+            config["restriction"]["gender"] = [gender]
+
+    if "region" in request.args:
+        print(request.args["region"])
+        region = request.args["region"]
+        if region != None and region != "any":
+            config["restriction"]["institution_region"] = [region]
 
     html = wbib.render_dashboard(config, mode="advanced", filepath="dashboard.html")
 

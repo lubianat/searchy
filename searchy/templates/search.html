@@ -7,11 +7,11 @@ Log In
 {% block main %}
 
 <div class="row container">
-    <form>
+    <form method=>
         <div class="row">
             <div class="col">
-                <input autocomplete=off id="searchterm" class="form-control" name="mainsubject"
-                    placeholder="Select a main subject" type="text" value=>
+                <input autocomplete=off id="searchterm" class="form-control" name="" placeholder="Select a main subject"
+                    type="text" value=>
                 <div id="searchresult">
 
                 </div>
@@ -26,7 +26,7 @@ Log In
                 </select>
             </div>
             <div class="col">
-                <select name="regions">
+                <select name="region">
                     <option disabled selected value="">Region</option>
                     {% for label, id in regions.items() %}
                     <option value="{{ id }}">{{ label }}</option>
