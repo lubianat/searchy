@@ -12,10 +12,20 @@ Log In
             <div class="col">
                 <input autocomplete=off id="searchterm" class="form-control" name="" placeholder="Select a main subject"
                     type="text" value=>
+                {% if not main_subject %}
+                <div class="row container">
+                    See example:
+                    <ul>
+                        <li><a target="_blank" href="/search/Q105406038"> single cell transcriptomics</a></li>
+                    </ul>
+                </div>
+                {% endif %}
                 <div id="searchresult">
 
                 </div>
             </div>
+
+
             {% if main_subject %}
             <div class="col">
                 <select name="gender">
