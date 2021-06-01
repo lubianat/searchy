@@ -1,2 +1,0 @@
-class OAuthException(Exception):
-    pass
