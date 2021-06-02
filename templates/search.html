@@ -16,7 +16,11 @@ Log In
             <div class="col">
                 <input autocomplete=off id="searchterm" class="form-control" name="" placeholder="Select a main subject"
                     type="text" value=>
+                <div id="searchresult">
+
+                </div>
                 {% if not main_subject %}
+
                 <div class="row container">
                     See example:
                     <ul>
@@ -24,9 +28,6 @@ Log In
                     </ul>
                 </div>
                 {% endif %}
-                <div id="searchresult">
-
-                </div>
             </div>
 
 
@@ -47,10 +48,6 @@ Log In
                     {% endfor %}
                 </select>
             </div>
-            <div class="col">
-                <input type="text" id='input-regions'>Test</input>
-            </div>
-
             <div class="col">
 
                 <input type="submit" value="Filter">
