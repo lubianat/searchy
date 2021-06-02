@@ -57,6 +57,8 @@ def search_with_topic(item_id):
 
     main_subject = {item_id: item_label}
     genders = {"female": "Q6581072", "any": "any"}
+
+    # Query for regions: https://w.wiki/3RWu
     regions = {"latin america": "Q12585", "any": "any"}
     with open("config.yaml") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
