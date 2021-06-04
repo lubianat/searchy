@@ -6,5 +6,30 @@ Searchy
 
 {% block main %}
 
+<div class="container">
+    Wikidata-powered, semantic searches.
+    <ul>
+        <li>Find articles tagged by topic on Wikidata</li>
+        <li>Filter the results by metascientific information (gender and region)</li>
+    </ul>
 
+    To get started, just select a topic of interest:
+
+    <div class="row">
+
+        <div class="col">
+            <input autocomplete=off id="searchterm" class="form-control" name="" placeholder="Select a main subject"
+                type="text" value=>
+            <div id="searchresult">
+
+            </div>
+            <div class="row container">
+                See example:
+                <ul>
+                    <li><a href="/search/Q105406038"> single cell transcriptomics</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
