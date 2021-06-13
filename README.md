@@ -4,7 +4,7 @@ Searchy is a flask app to for metascience-aware semantic searches on Wikidata.
 A live version of the tool is hosted at <https://searchy.toolforge.org>.
 It is currently a prototype in beta version written as a final project for CS50.
 
-#### Video Demo:  <TO ADD>
+#### Video Demo: https://youtu.be/ahYwxNtO4GI
   
 #### Description:
 
