@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block main %}
+
+<div class="row container">
+  <form method="get">
+
+    {% if main_subject %}
+    <div class="col">
+      <select name="gender">
+        <option disabled selected value="">Gender</option>
+        {% for label, id in genders.items() %}
+        <option value="{{ id }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+      <select name="region">
+        <option disabled selected value="">Region</option>
+        {% for label, id in regions.items() %}
+        <option value="{{ id }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+
+      <input type="submit" value="Filter">
+    </div>
+    {% endif %}
+
+  </form>
+</div>
+
+{% if main_subject %}
+<div class="row container">
+  Main subject:
+  <ul>
+    {% for key, value in main_subject.items() %}
+    <li> <a target="_blank" href="https://wikidata.org/wiki/{{ key }}">{{ value }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{{ dashboard | safe}}
+{% endblock %}

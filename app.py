@@ -8,6 +8,37 @@ import flask
 import os
 from wbib import wbib
 import yaml
+from wikidata2df import wikidata2df
+
+app = Flask(__name__)
+
+
+def convert_doi_to_qid(list_of_dois):
+    """
+    Converts a list of DOI ids to Wikidata QIDs.
+    """
+    formatted_dois = '{ "' + '" "'.join(list_of_dois) + '"}'
+    query = f"""SELECT ?id ?item  ?itemLabel
+    WHERE {{
+        {{
+        SELECT ?item ?id WHERE {{
+            VALUES ?unformatted_id {formatted_dois}
+            BIND(UCASE(?unformatted_id) AS ?id)
+            ?item wdt:P356 ?id.
+        }}
+        }}
+        SERVICE wikibase:label 
+        {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }}}}
+    """
+
+    query_result = wikidata2df(query)
+
+    result = {"qids": set(query_result["item"].values), "missing": set()}
+    for doi in list_of_dois:
+        if doi.upper() not in list(query_result["id"].values):
+            result["missing"].add(doi)
+
+    return result
 
 
 # Configure application
@@ -17,6 +48,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 
 # Ensure responses aren't cached
 @app.after_request
@@ -30,6 +62,80 @@ def after_request(response):
 @app.route("/")
 def index():
     return flask.render_template("index.html")
+
+
+# A dashboard that takes a list of QIDs as direct parameters and displays them to the user
+@app.route("/dashboard")
+def dashboard():
+    qids = request.args.get("qids", "")
+    if qids:
+        qid_list = qids.split(",")
+    else:
+        return "No qids provided", 400
+
+    dashboard_html = wbib.render_dashboard(qid_list)
+
+    return flask.render_template(
+        "dashboard.html",
+        dashboard=dashboard_html,
+    )
+
+
+import bibtexparser
+
+
+from flask import request, redirect, url_for, render_template, flash
+import re  # For regex
+
+from wdcuration import lookup_multiple_ids
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if request.method == "POST":
+        # Check if DOI text input is provided
+        dois = request.form.get("dois", "").split()
+
+        # Check if a file is uploaded
+        file = request.files.get("bibtex_file")
+        if file and allowed_file(file.filename):
+            content = file.read().decode("utf-8")  # Assuming the file is UTF-8 encoded
+            extracted_dois = extract_dois_from_bibtex(content)
+            dois.extend(extracted_dois)
+        elif not dois:
+            flash("Please provide DOIs or a BIBTeX file.")
+            return redirect(request.url)
+
+        # Remove duplicates
+        dois = list(set(dois))
+        print(len(dois))
+        dois = [doi.upper() for doi in dois]
+        if len(dois) > 800:
+            flash("Too many DOIs, using only the first 800.")
+            dois = dois[:800]
+        if dois:
+            result = lookup_multiple_ids(
+                dois, wikidata_property="P356", return_type="list"
+            )
+            qids = ",".join(result)
+            return redirect(url_for("dashboard", qids=qids))
+        else:
+            flash("No DOIs found.")
+            return redirect(request.url)
+
+    return render_template("upload.html")
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in {"bib", "bibtex"}
+
+
+def extract_dois_from_bibtex(content):
+    """
+    Extracts DOIs from a BIBTeX file content using regular expression.
+    """
+    doi_pattern = re.compile(r"doi\s*=\s*{\s*([^}]+)\s*}", re.IGNORECASE)
+    return doi_pattern.findall(content)
 
 
 @app.route("/search")

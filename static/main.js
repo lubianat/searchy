@@ -35,16 +35,3 @@ $('#searchterm').keyup(function (e) {
             });
         });
 });
-
-$('#input-regions').selectize({
-    delimiter: ',',
-    persist: false,
-    valueField: 'email',
-    labelField: 'name',
-    searchField: ['name', 'email'],
-    options: [
-        { email: 'brian@thirdroute.com', name: 'Brian Reavis' },
-        { email: 'nikola@tesla.com', name: 'Nikola Tesla' },
-        { email: 'someone@gmail.com' }
-    ],
-});

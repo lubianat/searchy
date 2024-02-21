@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Searchy
+{% endblock %}
+
+{% block main %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h2 class="mb-4">Custom Dashboard</h2>
+    <p> Upload a bibtex file or add a list of DOIs to build a custom dashboard for your articles</p>
+    <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="dois">DOIs:</label>
+        <textarea name="dois" id="dois" rows="10" cols="30" class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Upload DOIs</button>
+      </div>
+    </form>
+    <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="bibtex_file">BIBTeX File:</label>
+        <input type="file" id="bibtex_file" name="bibtex_file" class="form-control-file">
+      </div>
+      <button type="submit" class="btn btn-secondary">Upload BIBTeX</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
