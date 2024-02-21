@@ -9,6 +9,10 @@ import os
 from wbib import wbib
 import yaml
 from wikidata2df import wikidata2df
+from flask import request, redirect, url_for, render_template, flash
+import re  # For regex
+
+from wdcuration import lookup_multiple_ids
 
 app = Flask(__name__)
 
@@ -79,15 +83,6 @@ def dashboard():
         "dashboard.html",
         dashboard=dashboard_html,
     )
-
-
-import bibtexparser
-
-
-from flask import request, redirect, url_for, render_template, flash
-import re  # For regex
-
-from wdcuration import lookup_multiple_ids
 
 
 @app.route("/upload", methods=["GET", "POST"])

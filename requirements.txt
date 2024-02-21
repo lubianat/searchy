@@ -2,4 +2,6 @@ flask
 flask_session
 pyyaml
 requests
-wbib
+wbib==0.3.11
+wdcuration
+wikidata2df
