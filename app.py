@@ -166,7 +166,7 @@ def search_with_topic(item_id):
 
     config["restriction"]["topic_of_work"] = [item_id]
     config["title"] = ""
-    config["subtitle"] = "Searchig articles about " + item_label
+    config["subtitle"] = "Searching articles about " + item_label
 
     if "gender" in request.args:
         print(request.args["gender"])
